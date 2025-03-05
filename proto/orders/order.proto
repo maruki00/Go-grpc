@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+option go_package = "orders.order";
+
+enum ProductType {
+    UNKOWEN = 0;
+    FOOD = 1;
+    DRINK = 3;
+}
+
+message Product {
+    uint64 product_id = 1      [json_name = "product_id"];
+    string Product_name = 2    [json_name = "Product_name"];
+    ProductType product_type =5 [json_name = "product_type"];
+}
+
+message Order {
+    uint64 order_id = 1 [json_name = "order_id"];
+    uint64 customer_id = 2 [json_name = "customer_id"];
+    bool is_active = 3 [json_name = "is_active"]; 
+    repeated Product products  = 4;
+    string order_date = 5 [json_name = "order_date"];
+}
+
+message Empty {}
+
+message PayloadWithSingleOrder {
+  Order order = 1;
+}
+
+service Orders {
+  rpc AddOrder(PayloadWithSingleOrder) returns (Empty) {}
+}
