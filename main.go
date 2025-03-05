@@ -1,27 +1,31 @@
+// main.go
+
 package main
 
 import (
-	repository "go-grpc/internal/Repository"
-	internal_grpc "go-grpc/internal/grpc"
-	internal_services "go-grpc/internal/services"
+	"fmt"
 	"log"
-	"net"
 
-	"google.golang.org/grpc"
+	"google.golang.org/protobuf/encoding/protojson"
+
+	orders_order "grpc/protogen/golang/orders"
 )
 
 func main() {
-	listner, err := net.Listen("tcp", ":9999")
+	orderItem := orders_order.Order{
+		OrderId:    10,
+		CustomerId: 11,
+		IsActive:   true,
+		OrderDate:  "01/01/2021",
+		Products: []*orders_order.Product{
+			{ProductId: 1, ProductName: "CocaCola", ProductType: orders_order.ProductType_DRINK},
+		},
+	}
+
+	bytes, err := protojson.Marshal(&orderItem)
 	if err != nil {
-		log.Fatal("Invalid Address : ", err)
+		log.Fatal("deserialization error:", err)
 	}
-	defer listner.Close()
 
-	grpcServer := grpc.NewServer()
-	svc := &internal_services.PersonService{
-		Repo: repository.NewRepository(),
-	}
-	internal_grpc.RegisterPersonServiceServer(grpcServer, svc)
-	grpcServer.Serve(listner)
-
+	fmt.Println(string(bytes))
 }
