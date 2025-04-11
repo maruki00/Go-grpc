@@ -1,31 +1,39 @@
-# Go-gRPC Example
+# Order Management Service (Go gRPC)
 
-This repository contains a basic example demonstrating the use of gRPC with Go. It showcases a simple service definition, implementation, and client interaction.
+This repository contains a basic implementation of an Order Management service using gRPC with Go. It demonstrates a structured project setup with separate directories for command-line tools, internal logic, Protocol Buffer definitions, generated code, and service implementation.
 
 ## Overview
 
-This example implements a simple "Greeter" service where a client can send a name to the server, and the server will respond with a personalized greeting.
+This example provides a foundational structure for an Order Management service. While the current commit history indicates initial file uploads, the intended functionality likely involves:
+
+* Defining service contracts for managing orders (e.g., creating, reading, updating, deleting orders).
+* Implementing the server-side logic to handle order-related operations.
+* Potentially including a client to interact with the Order Management service.
 
 **Key Components:**
 
-* **`proto/`:** Contains the Protocol Buffer (`.proto`) definition for the Greeter service.
-    * `proto/greet.proto`: Defines the `Greeter` service with a single `SayHello` RPC method.
-* **`server/`:** Contains the Go code for the gRPC server.
-    * `server/main.go`: Implements the `Greeter` service defined in the `.proto` file.
-* **`client/`:** Contains the Go code for the gRPC client.
-    * `client/main.go`: Interacts with the gRPC server by sending a greeting request.
+* **`cmd/`:** Likely intended to contain command-line interface (CLI) applications for interacting with the service (e.g., a client application).
+* **`internal/`:** Expected to house the core business logic and data access layers of the Order Management service.
+* **`proto/`:** Contains the Protocol Buffer (`.proto`) definition(s) for the Order Management service and its data structures. This is the contract between the client and the server.
+* **`protogen/golang/orders/`:** Contains the generated Go code from the `.proto` definition(s). This code provides the gRPC client and server stubs, as well as the Go representations of the messages.
+* **`README.md`:** This file, providing an overview and instructions for the project.
+* **`go.mod`:** The Go module definition file, tracking the project's dependencies.
+* **`go.sum`:** Contains the cryptographic hashes of the dependencies listed in `go.mod`, ensuring reproducible builds.
+* **`main.go`:** The main entry point for the gRPC server application.
+* **`makefile`:** A build automation tool that likely contains commands for generating code, building the server and client, and potentially running tests.
+* **`serviceOrder.go`:** Likely contains the Go implementation of the Order Management service defined in the `.proto` file.
 
 ## Prerequisites
 
 * **Go:** Version 1.16 or higher is recommended. You can download and install Go from [https://go.dev/dl/](https://go.dev/dl/).
-* **Protocol Buffer Compiler (protoc):** Required to compile the `.proto` file into Go code. You can find installation instructions here: [https://grpc.io/docs/protoc-installation/](https://grpc.io/docs/protoc-installation/).
-* **Go gRPC and Protocol Buffer Go plugins:** These are necessary for generating Go gRPC code from the `.proto` file. Install them using:
+* **Protocol Buffer Compiler (protoc):** Required to compile the `.proto` file(s) into Go code. You can find installation instructions here: [https://grpc.io/docs/protoc-installation/](https://grpc.io/docs/protoc-installation/).
+* **Go gRPC and Protocol Buffer Go plugins:** These are necessary for generating Go gRPC code from the `.proto` file(s). Install them using:
     ```bash
     go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
     go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
     ```
 
-## Getting Started
+## Getting Started (Initial Setup)
 
 1.  **Clone the repository:**
     ```bash
@@ -34,28 +42,21 @@ This example implements a simple "Greeter" service where a client can send a nam
     ```
 
 2.  **Generate Go gRPC code:**
-    Navigate to the root of the repository and run the following command to compile the `greet.proto` file:
+    Navigate to the root of the repository and run the following command to compile the Protocol Buffer definition(s) located in the `proto/` directory. Assuming your `.proto` file is named `orders.proto`:
     ```bash
-    protoc --go_out=. --go-grpc_out=. proto/greet.proto
+    protoc --go_out=./protogen/golang/orders --go-grpc_out=./protogen/golang/orders proto/orders.proto
     ```
-    This command will generate the `greet.pb.go` and `greet_grpc.pb.go` files in the `proto` directory.
+    **Note:** Adjust the output paths and the `.proto` file name according to your actual file structure within the `proto/` directory.
 
-3.  **Build and Run the Server:**
-    Navigate to the `server` directory:
+3.  **Build the Server:**
+    Navigate to the root of the repository and use the `go build` command to build the server:
     ```bash
-    cd server
-    go build -o server .
+    go build -o server main.go
+    ```
+    This will create an executable file named `server`.
+
+4.  **Run the Server:**
+    ```bash
     ./server
     ```
-    The server will start and listen on port `50051`.
-
-4.  **Build and Run the Client:**
-    Open a new terminal window and navigate to the `client` directory:
-    ```bash
-    cd ../client
-    go build -o client .
-    ./client <your_name>
-    ```
-    Replace `<your_name>` with the name you want to send to the server (e.g., `./client Alice`). The client will connect to the server and print the greeting received.
-
-## Project Structure
+    The server will likely start and listen on a specific port (defined in `main.go` or related configuration).
